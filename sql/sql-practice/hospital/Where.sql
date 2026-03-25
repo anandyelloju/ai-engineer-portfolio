@@ -179,3 +179,47 @@ WHERE a.admission_date = (
     FROM admissions a2
     WHERE a2.patient_id = p.patient_id
 );
+
+-- Hard
+
+/* Problem: Show patient_id, first_name, last_name, and attending doctor's specialty.
+Show only the patients who has a diagnosis as 'Epilepsy' and the doctor's first name is 'Lisa'
+Check patients, admissions, and doctors tables for required information. */
+SELECT 
+  p.patient_id,
+  p.first_name,
+  p.last_name,
+  d.specialty 
+FROM patients p
+JOIN admissions a ON p.patient_id = a.patient_id
+JOIN doctors d ON a.attending_doctor_id = d.doctor_id
+WHERE a.diagnosis = 'Epilepsy' AND d.first_name = 'Lisa';
+
+/* Problem: We are looking for a specific patient. Pull all columns for the patient who matches the following criteria:
+- First_name contains an 'r' after the first two letters.
+- Identifies their gender as 'F'
+- Born in February, May, or December
+- Their weight would be between 60kg and 80kg
+- Their patient_id is an odd number
+- They are from the city 'Kingston' */
+SELECT *
+FROM patients
+WHERE
+  first_name LIKE '__%r%'
+  AND gender = 'F'
+  AND MONTH(birth_date) IN (2, 5, 12)
+  AND weight BETWEEN 60 AND 80
+  AND patient_id % 2 = 1
+  AND city = 'Kingston';
+
+/* Problem: Show the percent of patients that have 'M' as their gender. Round the answer to the nearest hundreth number and in percent form. */
+SELECT
+  ROUND(
+    (CAST(
+      COUNT(
+        CASE 
+          WHEN gender = 'M' THEN 1 
+        END) 
+      AS FLOAT) / COUNT(*)) * 100,
+    2 ) || '%' AS percent_male
+FROM patients;  
